@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 
 #[\Symfony\Component\Console\Attribute\AsCommand(
@@ -16,10 +17,14 @@ use Symfony\Component\Filesystem\Filesystem;
 class MakeWorkflowCommand extends Command
 {
     private Filesystem $filesystem;
+    private string $srcDir;
 
-    public function __construct()
+    public function __construct(
+        #[Autowire('%kernel.project_dir%')] string $projectDir,
+    )
     {
         parent::__construct();
+        $this->srcDir = $projectDir . '/src';
         $this->filesystem = new Filesystem();
     }
 
@@ -38,7 +43,7 @@ class MakeWorkflowCommand extends Command
         $fs = $this->filesystem;
 
         // Directorios base
-        $baseDir = dirname(__DIR__, 1);
+        $baseDir = $this->srcDir;
         $enumDir = "$baseDir/Enum";
         $entityDir = "$baseDir/Entity/Workflow";
         $repositoryDir = "$baseDir/Repository";
