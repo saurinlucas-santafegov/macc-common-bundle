@@ -63,7 +63,7 @@ class MakeWorkflowCommand extends Command
 
         namespace App\\Enum;
 
-        use App\\Class\\Workflow\\WorkflowStateInterface;
+        use Macc\\CommonBundle\\Workflow\\WorkflowStateInterface;
 
         enum {$name}States: string implements WorkflowStateInterface
         {
@@ -76,7 +76,7 @@ class MakeWorkflowCommand extends Command
                 return \$this->name;
             }
 
-            public static function getStartingState(?\\App\\Class\\Workflow\\WorkflowActionInterface \$action = null): self|array
+            public static function getStartingState(?\\Macc\\CommonBundle\\Workflow\\WorkflowActionInterface \$action = null): self|array
             {
                 return self::INIT;
             }
@@ -93,7 +93,7 @@ class MakeWorkflowCommand extends Command
 
         namespace App\\Enum;
 
-        use App\\Class\\Workflow\\WorkflowActionInterface;
+        use Macc\\CommonBundle\\Workflow\\WorkflowActionInterface;
 
         enum {$name}Actions: string implements WorkflowActionInterface
         {
@@ -114,8 +114,8 @@ class MakeWorkflowCommand extends Command
 
         namespace App\\Entity\\Workflow;
 
-        use App\\Class\\Workflow\\AbstractWorkflowObject;
-        use App\\Class\\Workflow\\AbstractWorkflowObjectHistory;
+        use Macc\\CommonBundle\\Workflow\\AbstractWorkflowObject;
+        use Macc\\CommonBundle\\Workflow\\AbstractWorkflowObjectHistory;
         use App\\Enum\\{$name}States;
         use App\\Enum\\{$name}Actions;
         use App\\Repository\\{$name}Repository;
@@ -187,8 +187,8 @@ class MakeWorkflowCommand extends Command
 
         namespace App\\Entity\\Workflow;
 
-        use App\\Class\\Workflow\\AbstractWorkflowObject;
-        use App\\Class\\Workflow\\AbstractWorkflowObjectHistory;
+        use Macc\\CommonBundle\\Workflow\\AbstractWorkflowObject;
+        use Macc\\CommonBundle\\Workflow\\AbstractWorkflowObjectHistory;
         use App\\Repository\\{$name}HistoryRepository;
         use Doctrine\\ORM\\Mapping as ORM;
 
@@ -256,11 +256,10 @@ class MakeWorkflowCommand extends Command
         namespace App\\Workflow;
 
         use Symfony\\Component\\Security\\Core\\User\\UserInterface;
-        use App\\Class\\Workflow\\WorkflowActionInterface;
-        use App\\Class\\Workflow\\AbstractWorkflowObject;
-        use App\\Class\\Workflow\\WorkflowStateInterface;
-        use App\\Class\\Workflow\\AbstractWorkflow;
-        use App\\Entity\\Workflow\\Planificacion;
+        use Macc\\CommonBundle\\Workflow\\WorkflowActionInterface;
+        use Macc\\CommonBundle\\Workflow\\AbstractWorkflowObject;
+        use Macc\\CommonBundle\\Workflow\\WorkflowStateInterface;
+        use Macc\\CommonBundle\\Workflow\\AbstractWorkflow;
         use App\\Enum\\{$name}States;
         use App\\Enum\\{$name}Actions;
         use Override;
