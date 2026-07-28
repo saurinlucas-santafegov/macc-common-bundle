@@ -2,9 +2,10 @@
     "name": "macc/common-bundle",
     "description": "Servicios, comandos y clases compartidas para proyectos del Ministerio de Ambiente y Cambio Climático",
     "type": "symfony-bundle",
-    "license": "proprietary",
+    "license": "MIT",
     "minimum-stability": "stable",
     "prefer-stable": true,
+    "keywords": ["symfony", "bundle", "macc", "utilities"],
     "require": {
         "php": ">=8.2",
         "ext-ctype": "*",
