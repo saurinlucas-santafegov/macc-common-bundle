@@ -23,7 +23,7 @@ abstract class AbstractWorkflowObjectHistory
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?\DateTimeInterface $date = null;
 
-    #[ORM\ManyToOne(targetEntity: \App\Entity\Usuario::class)]
+    #[ORM\ManyToOne(targetEntity: UserInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?UserInterface $user = null;
 
