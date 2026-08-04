@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Class\Workflow;
+namespace Macc\CommonBundle\Workflow;
 
 trait WorkflowActionTrait
 {
