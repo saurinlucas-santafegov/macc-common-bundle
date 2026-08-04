@@ -34,7 +34,7 @@ abstract class AbstractWorkflowObject
         $historiesclass = $this->getHistoriesClass();
         $newHistory = (new  $historiesclass)
             ->setWorkflowObject($this)
-            ->setUser($user instanceof UserInterface ? $user->getUserIdentifier() : $user)
+            ->setUsuario($user instanceof UserInterface ? $user->getUserIdentifier() : $user)
             ->setState($newState)
             ->setAction($action)
             ->setDate(new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires')))
