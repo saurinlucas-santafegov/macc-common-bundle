@@ -2,7 +2,6 @@
 
 namespace Macc\CommonBundle\Workflow;
 
-use Macc\CommonBundle\Workflow\AbstractWorkflowObjectHistory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

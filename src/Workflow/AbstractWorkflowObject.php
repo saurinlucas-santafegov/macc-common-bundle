@@ -2,7 +2,6 @@
 
 namespace Macc\CommonBundle\Workflow;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -25,20 +24,24 @@ abstract class AbstractWorkflowObject
     abstract public function removeHistory(AbstractWorkflowObjectHistory $history): static;
 
     public function transition(
-        UserInterface $user,
+        UserInterface|string $user,
         WorkflowActionInterface $action,
-        WorkflowStateInterface $newState
+        WorkflowStateInterface $newState,
+        ?object $initiator = null,
+        object ...$contextObjects,
     ): static
     {
         $historiesclass = $this->getHistoriesClass();
         $newHistory = (new  $historiesclass)
             ->setWorkflowObject($this)
-            ->setUser($user)
+            ->setUser($user instanceof UserInterface ? $user->getUserIdentifier() : $user)
             ->setState($newState)
             ->setAction($action)
-            ->setDate(new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires')));
+            ->setDate(new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires')))
+            ->setInitiator($initiator)
+            ->saveData($this)
+            ->setContext(...$contextObjects);
 
-        $newHistory->saveData($this);
         $this->addHistory($newHistory);
 
         return $this;

@@ -4,7 +4,6 @@ namespace Macc\CommonBundle\Workflow;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\MappedSuperclass]
 abstract class AbstractWorkflowObjectHistory
@@ -23,12 +22,17 @@ abstract class AbstractWorkflowObjectHistory
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?\DateTimeInterface $date = null;
 
-    #[ORM\ManyToOne(targetEntity: UserInterface::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?UserInterface $user = null;
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $user = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
     protected ?array $data = [];
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $initiatorType = null;
+
+    #[ORM\Column(type: Types::INTEGER, length: 255, nullable: true)]
+    protected ?int $initiatorId = null;
 
     abstract public function getWorkflowObject(): ?AbstractWorkflowObject;
 
@@ -95,12 +99,12 @@ abstract class AbstractWorkflowObjectHistory
         return $this;
     }
 
-    public function getUser(): ?UserInterface
+    public function getUser(): ?string
     {
         return $this->user;
     }
 
-    public function setUser(?UserInterface $user): static
+    public function setUser(?string $user): static
     {
         $this->user = $user;
         return $this;
@@ -120,12 +124,79 @@ abstract class AbstractWorkflowObjectHistory
     /**
      * Guarda una snapshot del objeto.
      */
-    public function saveData(AbstractWorkflowObject $object): void
+    public function saveData(AbstractWorkflowObject $object): static
     {
         $this->data = [
             'state' => $object->getState()?->label(),
-            'class' => get_class($object),
-            'updatedAt' => (new \DateTime())->format('Y-m-d H:i:s'),
         ];
+
+        return $this;
+    }
+
+    public function setContext(object ...$contextObjects): static
+    {
+        foreach ($contextObjects as $object) {
+            $this->addContext($object);
+        }
+
+        return $this;
+    }
+
+    public function addContext(object $contextObject): static
+    {
+        if ($contextObject->getId() === null) {
+            throw new \RuntimeException("El objeto que se quiere agregar como contexto no tiene Id. Puede que se quiera agregar un objeto sin persistir.");
+        }
+
+        if (!array_key_exists('context', $this->data)) {
+            $this->data['context'] = [];
+        }
+
+        $this->data['context'] = [
+            'id' => $contextObject->getId(),
+            'class' => $contextObject::class,
+        ];
+
+        return $this;
+    }
+
+    public function getContext(): ?array
+    {
+        return array_key_exists('context', $this->data)
+            ? $this->data['context']
+            : null;
+    }
+
+    public function getInitiatorType(): ?string
+    {
+        return $this->initiatorType;
+    }
+
+    public function getInitiatorId(): ?int
+    {
+        return $this->initiatorId;
+    }
+
+    public function setInitiator(?object $initiator = null): static
+    {
+        if (!$initiator) {
+            $this->initiatorType = null;
+            $this->initiatorId = null;
+
+            return $this;
+        }
+
+        if (!method_exists($initiator, 'getId') && $initiator->getId() === null) {
+            throw new \RuntimeException("El objeto que se quiere agregar como contexto no tiene Id. Puede que se quiera agregar un objeto sin persistir.");
+        }
+
+        $this->initiatorType = $initiator::class;
+        $this->initiatorId = $initiator->getId();
+
+        if (method_exists($initiator, 'setHistory')) {
+            $initiator->setHistory($this);
+        }
+
+        return $this;
     }
 }

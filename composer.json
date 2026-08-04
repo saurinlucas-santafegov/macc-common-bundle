@@ -16,7 +16,8 @@
         "symfony/dotenv": "^7.4",
         "symfony/framework-bundle": "^7.4",
         "symfony/yaml": "^7.4",
-        "symfony/security-bundle": "^7.4"
+        "symfony/security-bundle": "^7.4",
+        "doctrine/doctrine-bundle": "^2.19"
     },
     "autoload": {
         "psr-4": {
