@@ -99,9 +99,12 @@ class MakeWorkflowCommand extends Command
         namespace App\\Enum;
 
         use Macc\\CommonBundle\\Workflow\\WorkflowActionInterface;
+        use Macc\\CommonBundle\\Workflow\\WorkflowActionTrait;
 
         enum {$name}Actions: string implements WorkflowActionInterface
         {
+            use WorkflowActionTrait;
+
             case START = 'START';
             case CANCEL = 'CANCEL';
             case FINISH = 'FINISH';
