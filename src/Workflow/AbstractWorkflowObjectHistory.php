@@ -23,7 +23,7 @@ abstract class AbstractWorkflowObjectHistory
     protected ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    protected ?string $user = null;
+    protected ?string $usuario = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
     protected ?array $data = [];
@@ -99,14 +99,14 @@ abstract class AbstractWorkflowObjectHistory
         return $this;
     }
 
-    public function getUser(): ?string
+    public function getUsuario(): ?string
     {
-        return $this->user;
+        return $this->usuario;
     }
 
-    public function setUser(?string $user): static
+    public function setUsuario(?string $usuario): static
     {
-        $this->user = $user;
+        $this->usuario = $usuario;
         return $this;
     }
 
