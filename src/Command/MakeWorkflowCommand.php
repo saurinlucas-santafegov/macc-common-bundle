@@ -296,7 +296,9 @@ class MakeWorkflowCommand extends Command
                 AbstractWorkflowObject \$object,
                 WorkflowActionInterface \$action,
                 WorkflowStateInterface \$nextState,
-                UserInterface \$user,
+                UserInterface|string \$user,
+                ?object \$initiator = null,
+                object ...\$contextObjects,
             ): bool {
                 /**
                  * Modify this function to trigger actions before a transition is
