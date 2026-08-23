@@ -152,7 +152,7 @@ abstract class AbstractWorkflowObjectHistory
             $this->data['context'] = [];
         }
 
-        $this->data['context'] = [
+        $this->data['context'][] = [
             'id' => $contextObject->getId(),
             'class' => $contextObject::class,
         ];
@@ -186,7 +186,7 @@ abstract class AbstractWorkflowObjectHistory
             return $this;
         }
 
-        if (!method_exists($initiator, 'getId') && $initiator->getId() === null) {
+        if ($initiator->getId() === null) {
             throw new \RuntimeException("El objeto que se quiere agregar como contexto no tiene Id. Puede que se quiera agregar un objeto sin persistir.");
         }
 
