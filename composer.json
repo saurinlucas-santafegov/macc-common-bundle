@@ -7,17 +7,20 @@
     "prefer-stable": true,
     "keywords": ["symfony", "bundle", "macc", "utilities"],
     "require": {
-        "php": ">=8.2",
+        "doctrine/dbal": "^3.0",
+        "doctrine/doctrine-bundle": "^2.19",
+        "doctrine/orm": "^3.6",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "doctrine/dbal": "^3.0",
-        "doctrine/orm": "^3.6",
+        "php": ">=8.2",
         "symfony/console": "^7.4",
         "symfony/dotenv": "^7.4",
+        "symfony/form": "^7.4",
         "symfony/framework-bundle": "^7.4",
-        "symfony/yaml": "^7.4",
         "symfony/security-bundle": "^7.4",
-        "doctrine/doctrine-bundle": "^2.19"
+        "symfony/twig-bundle": "^7.4",
+        "symfony/ux-twig-component": "^2.35",
+        "symfony/yaml": "^7.4"
     },
     "autoload": {
         "psr-4": {

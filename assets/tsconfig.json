@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "es2021",
+        "module": "NodeNext",
+        "moduleResolution": "nodenext",
+        "strict": false,
+        "types": ["node"]
+    },
+    "include": ["src/**/*.ts", "controllers/**/*.ts"]
+}

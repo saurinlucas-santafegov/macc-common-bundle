@@ -1,0 +1,178 @@
+{% use 'bootstrap_5_layout.html.twig' with
+    form_row_render as base_form_row_render,
+    button_row as base_button_row
+%}
+
+{% block checkbox_widget %}
+    {%- set attr_class = attr_class|default(attr.class|default('')) -%}
+    {%- set row_class = '' -%}
+    {# Agregar condicion para el custom selector #}
+    {%- if 'btn-check' not in attr_class and 'custom-selector-check-input' not in attr_class -%}
+        {%- set attr_class = attr_class ~ ' form-check-input' -%}
+        {%- set row_class = 'form-check' -%}
+    {%- endif -%}
+    {%- set attr = attr|merge({class: attr_class|trim}) -%}
+    {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
+    {%- if 'checkbox-inline' in parent_label_class %}
+        {%- set row_class = row_class ~ ' form-check-inline' -%}
+    {% endif -%}
+    {%- if 'checkbox-switch' in parent_label_class %}
+        {%- set row_class = row_class ~ ' form-switch' -%}
+    {% endif -%}
+    {%- if row_class is not empty -%}
+        <div class="{{ row_class }}">
+    {%- endif -%}
+    {# Armar el widget con el original de 'form_div_layout.html.twig' #}
+    {% set widget %}
+        <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    {% endset %}
+    {{- form_label(form, null, { widget: widget }) -}}
+    {%- if row_class is not empty -%}
+        </div>
+    {%- endif -%}
+{% endblock checkbox_widget %}
+
+{% block radio_widget %}
+    {%- set attr_class = attr_class|default(attr.class|default('')) -%}
+    {%- set row_class = '' -%}
+    {# Agregar condicion para el custom selector #}
+    {%- if 'btn-check' not in attr_class and 'custom-selector-check-input' not in attr_class -%}
+        {%- set attr_class = attr_class ~ ' form-check-input' -%}
+        {%- set row_class = 'form-check' -%}
+    {%- endif -%}
+    {%- set attr = attr|merge({class: attr_class|trim}) -%}
+    {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
+    {%- if 'radio-inline' in parent_label_class -%}
+        {%- set row_class = row_class ~ ' form-check-inline' -%}
+    {%- endif -%}
+    {%- if row_class is not empty -%}
+        <div class="{{ row_class }}">
+    {%- endif -%}
+    {# Armar el widget con el original de 'form_div_layout.html.twig' #}
+    {% set widget %}
+        <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    {% endset %}
+    {{- form_label(form, null, { widget: widget }) -}}
+    {%- if row_class is not empty -%}
+        </div>
+    {%- endif -%}
+{% endblock radio_widget %}
+
+{% block form_widget_simple -%}
+    {%- set row_class = row_class|default(row_attr.class|default('')) -%}
+    {%- set attr_class = attr_class|default(attr.class|default('')) -%}
+    {%- if type is not defined or type != 'hidden' %}
+        {%- set widget_class = ' form-control' %}
+        {%- if type|default('') == 'color' -%}
+            {%- set widget_class = widget_class ~ ' form-control-color' -%}
+        {%- elseif type|default('') == 'range' -%}
+            {%- set widget_class = ' form-range' -%}
+        {%- endif -%}
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ widget_class)|trim}) -%}
+    {% endif -%}
+    {%- if type is defined and type in ['range', 'color'] %}
+        {# Attribute "required" is not supported #}
+        {% set required = false %}
+    {% endif -%}
+    {%- set type = type|default('text') -%}
+    {%- if type == 'range' or type == 'color' -%}
+        {# Attribute "required" is not supported #}
+        {%- set required = false -%}
+    {%- endif -%}
+    <input type="{{ type }}" {% if 'form-floating' in row_class %}placeholder=""{% endif %} {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{%- endblock form_widget_simple %}
+
+{% block collection_row %}
+    {%- set row_content -%}
+        {# wrapper class por defecto: "card" #}
+        {% set wrapper_class = form.vars.wrapper_class|default('') %}
+        {# prototype con wrapper #}
+        {% set prototype_html = '' %}
+        {%- if form.vars.allow_add and form.vars.prototype is defined -%}
+            {%- set prototype_html -%}
+                <div {# data-item-index se agrega por typescript #} class="{{ wrapper_class }} item-collection">
+                    {# card-body en caso de que wrapper_class sea "card" #}
+                    {% if 'card' in wrapper_class %}<div class="card-body">{% endif %}
+                        {{ form_row(form.vars.prototype) }}
+                        <div class="d-flex justify-content-end">
+                            <twig:Macc:Button icon="delete"
+                                textVariant="danger"
+                                data-role="delete"
+                                data-parent-collection-id="collection-{{ id }}" /> {# action y item-index no necesito porque se va a manejar por typescript #}
+                        </div>
+                    {% if wrapper_class == 'card' %}</div>{% endif %}
+                </div>
+            {%- endset -%}
+        {%- endif -%}
+        {# container #}
+        <div class="collection-wrapper mt-4">
+            {# collection label #}
+            {{ form_label(form) }}
+            {# container #}
+            <div id="collection-{{ id }}"
+                 class="collection-items mb-4 {{ wrapper_class == 'card' ? 'row g-4 ' : '' }}{{ form.vars.container_class|default('') }}"
+                 data-index="{{ form|length > 0 ? (form|last).vars.name + 1 : 0 }}"
+                 data-prototype-name="{{ form.vars.prototype_name }}"
+                 data-prototype="{{ prototype_html|e('html_attr') }}">
+                {# items existentes #}
+                {% for child in form %}
+                    <div data-item-index="{{ loop.index }}"
+                         class="{{ wrapper_class }} item-collection">
+                        {% if wrapper_class == 'card' %}<div class="card-body">{% endif %}
+                            {{ form_row(child) }}
+                            <div class="d-flex justify-content-end">
+                                <twig:Macc:Button icon="delete"
+                                    textVariant="danger"
+                                    data-role="delete"
+                                    data-parent-collection-id="collection-{{ id }}"
+                                    data-parent-item-index="{{ loop.index }}"
+                                    data-action="click->dynamic-form#deleteFormFromCollection" />
+                            </div>
+                        {% if wrapper_class == 'card' %}</div>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            {{ form_errors(form) }}
+        </div>
+        {# add button #}
+        {% if form.vars.allow_add %}
+            <div class="d-flex">
+                <button type="button" class="btn btn-primary w-100"
+                        data-collection-holder-id="collection-{{ id }}"
+                        data-action="click->dynamic-form#addFormToCollection"
+                >Agregar {{ form.vars.add_button_label|default('') }}</button>
+            </div>
+        {% endif %}
+    {%- endset -%}
+    {{- block('wrapper_row') -}}
+{% endblock %}
+
+{# Div externo alrededor del form_row (App\Form\Extension\WrapperAttrType). Sirve para hacer col (wrapper_attr) > form-floating (row_attr) #}
+{%- block wrapper_row -%}
+    {%- set wrapper_attr = wrapper_attr|default({}) -%}
+    {%- if wrapper_attr is not empty -%}
+        <div{% with {attr: wrapper_attr} %}{{ block('attributes') }}{% endwith %}>
+            {{- row_content|raw -}}
+        </div>
+    {%- else -%}
+        {{- row_content|raw -}}
+    {%- endif -%}
+{%- endblock wrapper_row -%}
+
+{#- Punto único por el que pasan form_row, choice_row, date_row, time_row y datetime_row -#}
+{%- block form_row_render -%}
+    {%- set row_content -%}{{- block('base_form_row_render') -}}{%- endset -%}
+    {{- block('wrapper_row') -}}
+{%- endblock form_row_render -%}
+
+{#- button_row no pasa por form_row_render -#}
+{%- block button_row -%}
+    {%- set row_content -%}{{- block('base_button_row') -}}{%- endset -%}
+    {{- block('wrapper_row') -}}
+{%- endblock button_row -%}
+
+{#- repeated_row tampoco pasa por form_row_render: envuelve las dos sub-rows juntas -#}
+{%- block repeated_row -%}
+    {%- set row_content -%}{{- block('form_rows') -}}{%- endset -%}
+    {{- block('wrapper_row') -}}
+{%- endblock repeated_row -%}

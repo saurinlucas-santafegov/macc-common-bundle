@@ -13,4 +13,18 @@ class MaccCommonBundle extends AbstractBundle
         // This tells Symfony to load your bundle's services.yaml
         $container->import('../config/services.yaml');
     }
+
+    /**
+     * Registrar form theme
+     */
+    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+    {
+        if (!$builder->hasExtension('twig')) {
+            return;
+        }
+
+        $container->extension('twig', [
+            'form_themes' => ['@MaccCommon/form/macc_form_theme.html.twig'],
+        ]);
+    }
 }
