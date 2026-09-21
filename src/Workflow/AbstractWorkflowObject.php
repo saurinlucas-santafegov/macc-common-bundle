@@ -32,12 +32,18 @@ abstract class AbstractWorkflowObject
     ): static
     {
         $historiesclass = $this->getHistoriesClass();
+
+        $date = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
+
         $newHistory = (new  $historiesclass)
             ->setWorkflowObject($this)
             ->setUsuario($user instanceof UserInterface ? $user->getUserIdentifier() : $user)
             ->setState($newState)
             ->setAction($action)
-            ->setDate(new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires')))
+            ->setDate($date)
+            ->setFechaVigencia($initiator instanceof WorkflowFechaVigenciaInterface
+                ? $initiator->getFechaVigencia()
+                : $date)
             ->setInitiator($initiator)
             ->saveData($this)
             ->setContext(...$contextObjects);

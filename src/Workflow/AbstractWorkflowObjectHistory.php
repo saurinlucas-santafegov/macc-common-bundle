@@ -22,6 +22,9 @@ abstract class AbstractWorkflowObjectHistory
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?\DateTimeInterface $date = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $fechaVigencia = null;
+
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $usuario = null;
 
@@ -87,7 +90,6 @@ abstract class AbstractWorkflowObjectHistory
         return $this;
     }
 
-
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
@@ -96,6 +98,17 @@ abstract class AbstractWorkflowObjectHistory
     public function setDate(?\DateTimeInterface $date): static
     {
         $this->date = $date;
+        return $this;
+    }
+
+    public function getFechaVigencia(): ?\DateTimeInterface
+    {
+        return $this->fechaVigencia ?? $this->date;
+    }
+
+    public function setFechaVigencia(?\DateTimeInterface $fechaVigencia): static
+    {
+        $this->fechaVigencia = $fechaVigencia;
         return $this;
     }
 
