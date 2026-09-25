@@ -42,13 +42,14 @@ class MakeWorkflowCommand extends Command
 
         $fs = $this->filesystem;
 
+        $upperName = strtoupper($name);
+
         // Directorios base
         $baseDir = $this->srcDir;
         $enumDir = "$baseDir/Enum";
         $entityDir = "$baseDir/Entity/Workflow";
         $repositoryDir = "$baseDir/Repository";
         $workflowDir = "$baseDir/Workflow";
-        $securityDir = "$baseDir/Security/Voter";
 
         $fs->mkdir([$enumDir, $entityDir, $repositoryDir, $workflowDir]);
 
@@ -60,7 +61,6 @@ class MakeWorkflowCommand extends Command
         $entityRepositoryFile = "$repositoryDir/{$name}Repository.php";
         $entityHistoryRepositoryFile = "$repositoryDir/{$name}HistoryRepository.php";
         $workflowFile = "$workflowDir/{$name}Workflow.php";
-        $securityFile = "$securityDir/App/{$name}Voter.php";
 
         // ---------------- ENUMS ----------------
         $statesContent = <<<PHP
@@ -98,10 +98,10 @@ class MakeWorkflowCommand extends Command
 
         namespace App\\Enum;
 
-        use Macc\\CommonBundle\\Workflow\\WorkflowActionInterface;
+        use Macc\\CommonBundle\\Security\\RolActionInterface;
         use Macc\\CommonBundle\\Workflow\\WorkflowActionTrait;
 
-        enum {$name}Actions: string implements WorkflowActionInterface
+        enum {$name}Actions: string implements RolActionInterface
         {
             use WorkflowActionTrait;
 
@@ -112,6 +112,18 @@ class MakeWorkflowCommand extends Command
             public function label(): string
             {
                 return \$this->name;
+            }
+
+            // TODO: agregar el case a RolGrupo o definir el que se desee
+            public function getRolGrupo(): RolGrupo
+            {
+                return RolGrupo::{$upperName};
+            }
+
+            // TODO: mapear las actions a las funciones que se deseen
+            public function getRolFuncion(): RolFuncion
+            {
+                return RolFuncion::UPDATE;
             }
         }
         PHP;
@@ -311,57 +323,6 @@ class MakeWorkflowCommand extends Command
         }
         PHP;
 
-        // ---------------- VOTER CLASS ----------------
-        $lowercasename = strtolower($name);
-        $securityContent = <<<PHP
-        <?php
-
-        namespace App\\Security\\Voter\\App;
-
-        use App\\Entity\\{$name};
-        use App\\Entity\\Usuario;
-        use App\\Enum\\{$name}Actions;
-        use Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface;
-        use Symfony\\Component\\Security\\Core\\Authorization\\Voter\\Voter;
-
-        class {$name}Voter extends Voter
-        {
-            protected function supports(string \$attribute, mixed \$subject): bool
-            {
-                if (!\$subject instanceof {$name}) {
-                    return false;
-                }
-
-                \$allAttributes = array_merge(
-                    array_map(fn(\$c) => \$c->value, {$name}Actions::cases())
-                );
-
-                return in_array(\$attribute, \$allAttributes, true);
-            }
-
-            protected function voteOnAttribute(string \$attribute, mixed \${$name}, TokenInterface \$token): bool
-            {
-                \$user = \$token->getUser();
-
-                if (!\$user instanceof Usuario) {
-                    return false;
-                }
-
-                // DIRECT ACCESS IF ADMIN
-                if (in_array('ROLE_ADMINISTRADOR', \$user->getRoles(), true)) {
-                    return true;
-                }
-
-                // Check user has action access
-                if (in_array(\$attribute, array_map(fn(\$c) => \$c->value, {$name}Actions::cases()), true)) {
-                    return \$user->hasFuncion("{$lowercasename}", {$name}Actions::from(\$attribute)->name);
-                }
-
-                return false;
-            }
-        }
-
-        PHP;
 
         // ---------- CREAR ARCHIVOS ----------
         $fs->dumpFile($statesFile, $statesContent);
@@ -371,7 +332,6 @@ class MakeWorkflowCommand extends Command
         $fs->dumpFile($entityRepositoryFile, $repositoryContent);
         $fs->dumpFile($entityHistoryRepositoryFile, $historyRepositoryContent);
         $fs->dumpFile($workflowFile, $workflowContent);
-        $fs->dumpFile($securityFile, $securityContent);
 
         $io->success("✅ Workflow '$name' succesfully generated. Files created:");
         $io->listing([
@@ -382,7 +342,6 @@ class MakeWorkflowCommand extends Command
             $entityRepositoryFile,
             $entityHistoryRepositoryFile,
             $workflowFile,
-            $securityFile,
         ]);
         $io->info([
             'States and Actions: '
@@ -405,13 +364,6 @@ class MakeWorkflowCommand extends Command
         ]);
         $io->listing([
             $workflowFile,
-        ]);
-
-        $io->info([
-            'Voter: '
-        ]);
-        $io->listing([
-            $securityFile,
         ]);
 
         return Command::SUCCESS;

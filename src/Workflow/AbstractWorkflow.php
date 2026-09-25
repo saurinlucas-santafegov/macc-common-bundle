@@ -3,7 +3,9 @@
 namespace Macc\CommonBundle\Workflow;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Macc\CommonBundle\Security\RolActionInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -72,13 +74,15 @@ abstract class AbstractWorkflow
 
         // 2 - Auth
         if ($this->security) {
-            if (!$this->authChecker->isGranted($actionKey, $object)) {
-                throw new \LogicException(sprintf(
-                    "User '%s' is not authorized to perform action '%s'.",
-                    $user instanceof UserInterface ? $user->getUserIdentifier() : $user,
-                    $action->label()
-                ));
-            }
+            $granted = $action instanceof RolActionInterface
+                ? $this->authChecker->isGranted($action->getRolFuncion()->value, $action->getRolGrupo())
+                : $this->authChecker->isGranted($actionKey, $object);   // Se necesita la action como RolFuncion en BD
+
+            if (!$granted) throw new AccessDeniedException(sprintf(
+                "User '%s' is not authorized to perform action '%s'.",
+                $user instanceof UserInterface ? $user->getUserIdentifier() : $user,
+                $action->label()
+            ));
         }
 
         // 3 - Validate transition
