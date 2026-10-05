@@ -110,7 +110,7 @@
             {{ form_label(form) }}
             {# container #}
             <div id="collection-{{ id }}"
-                 class="collection-items mb-4 {{ wrapper_class == 'card' ? 'row g-4 ' : '' }}{{ form.vars.container_class|default('') }}"
+                 class="collection-items mb-4 {{ wrapper_class == 'card' ? 'd-flex flex-column gap-4 ' : '' }}{{ form.vars.container_class|default('') }}"
                  data-index="{{ form|length > 0 ? (form|last).vars.name + 1 : 0 }}"
                  data-prototype-name="{{ form.vars.prototype_name }}"
                  data-prototype="{{ prototype_html|e('html_attr') }}">
