@@ -1,6 +1,6 @@
 {% set content %}{% block content %}{% endblock %}{% endset %}{# Unica forma de ver si tiene content o es un icono solo #}
 {%- set hasContent = content|trim is not empty -%}
-<{{ href is null ? 'button' : 'a' }} type="button"
+<{{ href is null ? 'button' : 'a' }} type="{{ type }}"
     {% if href is not null %}href="{{ href }}"{% endif %}
     class="btn{{ hasContent ? ' d-flex align-items-center gap-1' : '' }}{{ variant is null ? '' : ' btn-' ~ variant}}{{textVariant is null ? '' : ' text-' ~ textVariant}}{{' ' ~ class}}{{ border ? '' : ' border border-0' }}"
     {{attributes}}
