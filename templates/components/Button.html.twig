@@ -4,4 +4,4 @@
     {% if href is not null %}href="{{ href }}"{% endif %}
     class="btn{{ hasContent ? ' d-flex align-items-center gap-1' : '' }}{{ variant is null ? '' : ' btn-' ~ variant}}{{textVariant is null ? '' : ' text-' ~ textVariant}}{{' ' ~ class}}{{ border ? '' : ' border border-0' }}"
     {{attributes}}
->{% if icon is not null %}<span class="material-symbols-rounded">{{icon}}</span>{% endif %}{{ hasContent and icon is not null ' ' : '' }}{% if hasContent %}{{ content }}{% endif %}</{{ href is null ? 'button' : 'a' }}>
+>{% if icon is not null %}<span class="material-symbols-rounded">{{icon}}</span>{% endif %}{{ hasContent and icon is not null ? ' ' : '' }}{% if hasContent %}{{ content }}{% endif %}</{{ href is null ? 'button' : 'a' }}>
