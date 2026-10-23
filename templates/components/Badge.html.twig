@@ -1,0 +1,5 @@
+{% props variant = 'secondary', href = null %}
+{%- set tag = href is null ? 'span' : 'a' -%}
+<{{ tag }} {% if href is not null %}href="{{ href }}" {% endif %}{{ attributes.defaults({ class: 'badge text-bg-' ~ variant ~ (href is not null ? ' text-decoration-none') }) }}>
+    {%- block content %}{% endblock -%}
+</{{ tag }}>

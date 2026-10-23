@@ -15,7 +15,7 @@ class MaccCommonBundle extends AbstractBundle
     }
 
     /**
-     * Registrar form theme
+     * Registrar form theme y namespace `@Macc`, para los componentes `<twig:Macc:Nombre>`
      */
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
     {
@@ -25,6 +25,7 @@ class MaccCommonBundle extends AbstractBundle
 
         $container->extension('twig', [
             'form_themes' => ['@MaccCommon/form/macc_form_theme.html.twig'],
+            'paths' => [$this->getPath().'/templates' => 'Macc'],
         ]);
     }
 }

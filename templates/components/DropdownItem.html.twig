@@ -1,0 +1,6 @@
+{% props href = '#', icon = null %}
+<li>
+    <a href="{{ href }}" {{ attributes.defaults({ class: 'dropdown-item' ~ (icon is not null ? ' d-flex align-items-center gap-1') }) }}>
+        {% if icon is not null %}<twig:Macc:Icon name="{{ icon }}" />{% endif %}{% block content %}{% endblock %}
+    </a>
+</li>

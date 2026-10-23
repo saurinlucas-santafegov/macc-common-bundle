@@ -1,0 +1,15 @@
+{% props label, icon = null, variant = 'secondary', nav = false, align = null %}
+{%- set tag = nav ? 'li' : 'div' -%}
+{%- set toggleTag = nav ? 'a' : 'button' -%}
+<{{ tag }} {{ attributes.defaults({ class: nav ? 'nav-item dropdown' : 'dropdown' }) }}>
+    {% block toggle %}
+        <{{ toggleTag }} {{ nav ? 'href="#" role="button"' : 'type="button"' }}
+            class="{{ nav ? 'nav-link' : 'btn btn-' ~ variant }} dropdown-toggle{{ icon is not null ? ' d-flex align-items-center gap-1' }}"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            {% if icon is not null %}<twig:Macc:Icon name="{{ icon }}" />{% endif %}{{ label }}
+        </{{ toggleTag }}>
+    {% endblock %}
+    <ul class="dropdown-menu{{ align is not null ? ' dropdown-menu-' ~ align }}">
+        {% block content %}{% endblock %}
+    </ul>
+</{{ tag }}>

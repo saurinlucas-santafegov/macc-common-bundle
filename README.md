@@ -9,6 +9,13 @@ Ministerio de Ambiente y Cambio Climático.
 composer require macc/common-bundle
 ```
 
+## Componentes Twig
+
+Requieren `twig_component.anonymous_template_directory` configurado en el proyecto
+(viene por defecto en la recipe).
+
+Un proyecto puede sobreescribir cualquiera creando `templates/components/Macc/<Nombre>.html.twig`.
+
 ## Frontend
 
 Los assets se distribuyen dentro del propio bundle. En el proyecto hay que tener:

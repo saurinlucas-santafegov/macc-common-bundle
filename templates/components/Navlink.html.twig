@@ -1,0 +1,6 @@
+{% props href, icon = null %}
+<li class="nav-item">
+    <a href="{{ href }}" {{ attributes.defaults({ class: 'nav-link' ~ (icon is not null ? ' d-flex align-items-center gap-1') }) }}>
+        {% if icon is not null %}<twig:Macc:Icon name="{{ icon }}" />{% endif %}{% block content %}{% endblock %}
+    </a>
+</li>
