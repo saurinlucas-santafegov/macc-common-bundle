@@ -89,18 +89,29 @@ export class LocalidadSelector {
         this.localidadSelect.value = '';
 
         // Deshabilitar selects
-        this.departamentoSelect.disabled = !this.provinciaSelect.value;
-        this.localidadSelect.disabled = !this.provinciaSelect.value;
+        this.departamentoSelect.disabled = true;
+        this.localidadSelect.disabled = true;
 
         if (this.provinciaSelect.value) {
-            // Popular selects
-            const departamentos = await this.getDepartamentos(this.provinciaSelect.value);
-            this.popular(this.departamentoSelect, departamentos);
+            this.getDepartamentos(this.provinciaSelect.value)
+                .then(departamentos => {
+                    // popular select
+                    this.popular(this.departamentoSelect, departamentos);
 
-            // Trigger events
-            const event = new Event('change');
-            this.departamentoSelect.dispatchEvent(event);
-            this.localidadSelect.dispatchEvent(event);
+                    // habilitar una vez populado
+                    this.departamentoSelect.disabled = false;
+
+                    // trigger events
+                    const event = new Event('change');
+                    this.departamentoSelect.dispatchEvent(event);
+                    this.localidadSelect.dispatchEvent(event);
+                })
+                .catch(e => {
+                    this.departamentoSelect.disabled = true;
+                    this.localidadSelect.disabled = true;
+
+                    console.error("Ocurrio un error al querer cargar los departamentos.", e);
+                });
         }
     }
 
@@ -109,16 +120,23 @@ export class LocalidadSelector {
         this.localidadSelect.value = '';
 
         // Deshabilitar select
-        this.localidadSelect.disabled = !this.departamentoSelect.value;
+        this.localidadSelect.disabled = true;
 
         if (this.departamentoSelect.value) {
-            // Popular select
-            const lugares = await this.getLugares(this.departamentoSelect.value);
-            this.popular(this.localidadSelect, lugares);
+            this.getLugares(this.departamentoSelect.value)
+                .then(lugares => {
+                    this.popular(this.localidadSelect, lugares);
 
-            // Trigger events
-            const event = new Event('change');
-            this.localidadSelect.dispatchEvent(event);
+                    this.localidadSelect.disabled = false;
+
+                    const event = new Event('change');
+                    this.localidadSelect.dispatchEvent(event);
+                })
+                .catch(e => {
+                    this.localidadSelect.disabled = true;
+
+                    console.error("Ocurrio un error al querer cargar las localidades.", e);
+                })
         }
     }
 
