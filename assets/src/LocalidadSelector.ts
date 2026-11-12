@@ -84,10 +84,6 @@ export class LocalidadSelector {
     }
 
     async onProvinciaChange() {
-        // Borrar seleccion
-        this.departamentoSelect.value = '';
-        this.localidadSelect.value = '';
-
         // Deshabilitar selects
         this.departamentoSelect.disabled = true;
         this.localidadSelect.disabled = true;
@@ -116,9 +112,6 @@ export class LocalidadSelector {
     }
 
     async onDepartamentoChange() {
-        // Borrar seleccion
-        this.localidadSelect.value = '';
-
         // Deshabilitar select
         this.localidadSelect.disabled = true;
 
@@ -149,12 +142,19 @@ export class LocalidadSelector {
     }
 
     private popular(select: HTMLSelectElement, opciones: OpcionGeografica[]): void {
+        // seleccion actual
+        const selection = select.value;
         select.innerHTML = '<option value>-- Seleccionar --</option>';
         opciones.forEach(opcion => {
             const opt: HTMLOptionElement = document.createElement('option');
             opt.value = `${opcion.id}`;
             opt.innerHTML = opcion.nombre ? opcion.nombre : '';
             select.appendChild(opt);
+
+            // mantener la seleccion si sigue existiendo la opción
+            if (opt.value == selection) {
+                opt.selected = true;
+            }
         });
     }
 
